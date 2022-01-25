@@ -1,0 +1,31 @@
+
+- hosts: webservers
+
+  tasks:
+    - name: install nginx
+      apt:
+        name: nginx
+        state: latest
+      become: yes
+
+    - name: copy index.html file 
+      copy:
+        src: ../files/index.html 
+        dest: /usr/share/nginx/html/index.html
+      become: yes
+
+    - name: update nginx config
+      copy:
+        src: ../files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - restart nginx
+      become: yes
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: reloaded
+      become: yes
+
